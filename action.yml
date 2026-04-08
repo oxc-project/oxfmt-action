@@ -1,0 +1,102 @@
+name: "Oxfmt Action"
+description: "Format your code with Oxfmt"
+author: Oxc Contributors
+branding:
+  icon: anchor
+  color: blue
+
+inputs:
+  version:
+    description: "Oxfmt SemVer version pattern to use"
+    required: false
+    default: "latest"
+
+  config:
+    description: "Path to Oxfmt configuration file."
+    required: false
+    default: ""
+
+  ignore-path:
+    description: "Path to ignore file. If not specified, .gitignore and .prettierignore in the current directory are used."
+    required: false
+    default: ""
+
+  all-files:
+    description: "Check all files, not just changed ones. Only affects PRs."
+    required: false
+    default: "false"
+
+  base-branch:
+    description: "Base branch to diff PR branches against."
+    required: false
+    default: ""  # Default to PR target branch
+
+  working-directory:
+    description: "Working directory to run oxfmt in."
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set Base Branch
+      id: base-branch
+      shell: bash
+      if: github.event_name == 'pull_request'
+      run: |
+        if [ -z "${{ inputs.base-branch }}" ]; then
+          echo "Base branch not set. Defaulting to target branch of PR."
+          echo "base-branch=${{ github.event.pull_request.base.ref }}" >> "$GITHUB_OUTPUT"
+        else
+          echo "base-branch=${{ inputs.base-branch }}" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Fetch Base Branch
+      shell: bash
+      if: github.event_name == 'pull_request'
+      run: |
+        git fetch origin $BASE_BRANCH:$BASE_BRANCH --depth=1
+      env:
+        BASE_BRANCH: ${{ steps.base-branch.outputs.base-branch }}
+
+    - name: Check For NPX
+      shell: bash
+      run: |
+        if ! command -v npx &> /dev/null
+        then
+          echo "::error title=Node.js not found::npx could not be found. Please install Node.js."
+          exit 1
+        fi
+
+    - name: Run Oxfmt (Changed Files)
+      shell: bash
+      if: github.event_name == 'pull_request' && inputs.all-files == 'false'
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "::group::Run Oxfmt (Changed Files)"
+        files=$(git diff --name-only --diff-filter=ACMR --relative ${{ steps.base-branch.outputs.base-branch }} ${{ github.sha }})
+        echo "::debug::Files:"
+        echo "::debug::${files}"
+        if [ -z "$files" ]; then
+          echo "No changed files to check."
+          exit 0
+        fi
+        $GITHUB_ACTION_PATH/oxfmt.sh $files
+        echo "::endgroup::"
+      env:
+        OXFMT_VERSION: ${{ inputs.version }}
+        OXFMT_CONFIG: ${{ inputs.config }}
+        OXFMT_IGNORE_PATH: ${{ inputs.ignore-path }}
+
+    - name: Run Oxfmt (All Files)
+      shell: bash
+      if: github.event_name != 'pull_request' || inputs.all-files == 'true'
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "::group::Run Oxfmt (All Files)"
+        $GITHUB_ACTION_PATH/oxfmt.sh
+        echo "::endgroup::"
+      env:
+        OXFMT_VERSION: ${{ inputs.version }}
+        OXFMT_CONFIG: ${{ inputs.config }}
+        OXFMT_IGNORE_PATH: ${{ inputs.ignore-path }}
