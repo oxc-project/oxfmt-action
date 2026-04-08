@@ -1,0 +1,7 @@
+{
+  "name": "oxfmt-action",
+  "private": true,
+  "devDependencies": {
+    "oxfmt": "latest"
+  }
+}

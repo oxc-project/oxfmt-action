@@ -32,7 +32,9 @@ checked by default.
 For monorepos, you can use the `working-directory` input to check only a specific subdirectory.
 
 ## ⚡ Quick Start
+
 Here's a minimal example to get you started:
+
 ```yaml
 # .github/workflows/ci.yml
 name: CI
@@ -55,7 +57,9 @@ jobs:
 ```
 
 ## Example
+
 Here's a more complete example with all available options:
+
 ```yaml
 name: Format
 on: [push, pull_request]
@@ -64,34 +68,34 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: oxc-project/oxfmt-action@latest
-      with:
-        # Path to an Oxfmt configuration file.
-        config: .oxfmtrc.json
+      - uses: actions/checkout@v4
+      - uses: oxc-project/oxfmt-action@latest
+        with:
+          # Path to an Oxfmt configuration file.
+          config: .oxfmtrc.json
 
-        # Path to an ignore file. If not specified, .gitignore and
-        # .prettierignore in the current directory are used.
-        ignore-path: .prettierignore
+          # Path to an ignore file. If not specified, .gitignore and
+          # .prettierignore in the current directory are used.
+          ignore-path: .prettierignore
 
-        # By default, oxfmt-action will only check changed files when run on
-        # pull requests. To disable this behavior, set this to true.
-        # Note that this setting has no affect on any other kind of trigger.
-        all-files: false
+          # By default, oxfmt-action will only check changed files when run on
+          # pull requests. To disable this behavior, set this to true.
+          # Note that this setting has no affect on any other kind of trigger.
+          all-files: false
 
-        # Explicitly specify the base branch that PRs will be compared against.
-        # By default the branch the PR is attempting to merge into will be used.
-        # Has no affect on any other kind of trigger.
-        base-branch: main
+          # Explicitly specify the base branch that PRs will be compared against.
+          # By default the branch the PR is attempting to merge into will be used.
+          # Has no affect on any other kind of trigger.
+          base-branch: main
 
-        # Use a specific version of Oxfmt. You can also specify a SemVer
-        # pattern. This gets forwarded to npx. By default, 'latest' is used.
-        # See: https://www.npmjs.com/package/oxfmt
-        version: latest
+          # Use a specific version of Oxfmt. You can also specify a SemVer
+          # pattern. This gets forwarded to npx. By default, 'latest' is used.
+          # See: https://www.npmjs.com/package/oxfmt
+          version: latest
 
-        # Specify a working directory to run oxfmt in. Useful for monorepos
-        # where you want to check only a specific subdirectory.
-        working-directory: frontend
+          # Specify a working directory to run oxfmt in. Useful for monorepos
+          # where you want to check only a specific subdirectory.
+          working-directory: frontend
 ```
 
 ## ❤ Who's [Sponsoring Oxc](https://github.com/sponsors/Boshen)?

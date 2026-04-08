@@ -29,7 +29,7 @@ inputs:
   base-branch:
     description: "Base branch to diff PR branches against."
     required: false
-    default: ""  # Default to PR target branch
+    default: "" # Default to PR target branch
 
   working-directory:
     description: "Working directory to run oxfmt in."
