@@ -1,7 +1,9 @@
 {
-  "name": "oxfmt-action",
-  "private": true,
-  "devDependencies": {
-    "oxfmt": "latest"
+  name: oxfmt-action,
+  private: true,
+  devDependencies: {
+        oxfmt: 
+        latest
   }
 }
+
