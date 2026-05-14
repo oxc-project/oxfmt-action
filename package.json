@@ -1,8 +1,8 @@
 {
   "name": "oxfmt-action",
   "private": true,
-  "packageManager": "pnpm@11.0.4",
   "devDependencies": {
     "oxfmt": "latest"
-  }
+  },
+  "packageManager": "pnpm@11.0.4"
 }
